@@ -17,7 +17,7 @@
 	var idJ = /^[a-z0-9]{4,12}$/;
 // 아이디 유효성 검사(1 = 중복 / 0 != 중복)
 $(document).ready(function(){
-		console.log("반응이있다");
+		
 	$("#mem_id").blur(function() {
 		// id = "id_reg" / name = "userId"
 		var mem_id = $('#mem_id').val();
@@ -35,7 +35,7 @@ $(document).ready(function(){
 				$('#id_check').css('color', 'green');
 				if (data == mem_id) {
 						// 1 : 아이디가 중복되는 문구
-						console.log("왜 이게나와");
+						
 						$("#id_check").text("사용중인 아이디입니다.");
 						$("#id_check").css("color", "red");
 						$("#reg_submit").attr("disabled", true);
