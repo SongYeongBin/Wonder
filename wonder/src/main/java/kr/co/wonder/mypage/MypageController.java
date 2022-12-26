@@ -150,7 +150,7 @@ public class MypageController {
 		}
 		
 		//회원탈퇴
-		@RequestMapping(value="memberDelete",method=RequestMethod.POST)
+		@RequestMapping(value="mypage/memberDelete",method=RequestMethod.POST)
 		public String memberDelete(MemberDTO memberDTO,RedirectAttributes rttr, HttpSession session)throws Exception{
 				
 			MemberDTO user = (MemberDTO) session.getAttribute("user");
