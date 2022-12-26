@@ -7,6 +7,8 @@
 <main id="content" class="content" role="main">
 
 	
+	 
+	 
     <div class="loginbox">
         <form id="idForm" action="loginProc" method="post">
         <div class="textForm">
@@ -15,14 +17,19 @@
             <div class="textForm">
             <input type="password" name="mem_password" class="id" placeholder="비밀번호" class="in">
             </div>
-            <input type="submit" id="btn2" value="로그인"><br>
+            <input type="submit" id="btn2" onclick="loginTest()" value="로그인"><br>
+            
         </form>
         <a href="addMember"> 회원가입</a> <br>
         <a href="idfindView">아이디를 잊어버리셨나요?</a> <br>
         <a href="pwsFindView">비밀번호를 잊어버리셨나요?</a>
     </div>
-
-
+         <script>
+	    var msg = '${msg}';
+	    if(msg === '아이디 또는 비밀번호를 확인해주세요') {
+	        alert("아이디 또는 비밀번호를 확인해주세요");
+	    }
+	</script>
 	
 </main>
 <%@include file="../include2/footer.jsp" %>
