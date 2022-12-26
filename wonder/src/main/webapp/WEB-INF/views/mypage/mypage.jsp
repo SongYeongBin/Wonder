@@ -8,15 +8,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <%@include file="../include2/head.jsp" %>
-<script type="text/javascript">
-	$(document).ready(function(){
-		
-		$("#profileUpdateBtn").on("click", function(){
-			location.href="${contextPath}/mypage/profileUpdateView";
-		})
-		
-	})
-</script>
+
 <div data-v-76574781="" class="container customer md">
 	<div data-v-76574781="">
 		<div data-v-76574781="" class="snb_area">
@@ -27,10 +19,10 @@
 				<!---->
 					<ul data-v-4d11470e="" data-v-7bcac446="" class="snb_menu">
 						<li data-v-4d11470e="" class="menu_item menu_on"><a data-v-4d11470e="" href="${contextPath}/mypage/mypage" class="menu_link nuxt-link-exact-active nuxt-link-active" aria-current="page"> 마이페이지 </a></li>
-						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/notice/event" class="menu_link"> 프로필수정 </a></li>
-						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/notice/update" class="menu_link"> 캐쉬충전 </a></li>
-						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/notice/inquiry" class="menu_link"> 캐쉬출금 </a></li>
-						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/notice/inquiry" class="menu_link"> 회원탈퇴 </a></li>
+						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/mypage/profileUpdateView" class="menu_link"> 프로필수정 </a></li>
+						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/mypage/cashChargeView" class="menu_link"> 캐쉬충전 </a></li>
+						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/mypage/cashWithdrawView" class="menu_link"> 캐쉬출금 </a></li>
+						<li data-v-4d11470e="" class="menu_item"><a data-v-4d11470e="" href="${contextPath}/mypage/deleteView" class="menu_link"> 회원탈퇴 </a></li>
 					</ul>
 				</div>
 			</nav>
@@ -39,7 +31,7 @@
 	
 
 	<form class="mypage" action="mypage" method="GET">
-<div style="text-align:left">	<h3>프로필 정보</h3>  <p>
+	<div style="text-align:left">	<h3>프로필 정보</h3>  <p>
 	<hr color="black" size="10px">
 	
 	<div class="profilebox">
@@ -94,6 +86,7 @@
 			<div class="profileid">${user.mem_phonenum }</div>
 			</div>	
 				</div>
+				
 				<div class="profile_group">
 		<h6 class="group-title">이메일</h6>
 			
@@ -131,6 +124,15 @@
 	
 	</div>
 		</form>
+		<script type="text/javascript">
+	$(document).ready(function(){
+		
+		$("#profileUpdateBtn").on("click", function(){
+			location.href="${contextPath}/mypage/profileUpdateView";
+		})
+		
+	})
+	</script>
 		
 		
 		
@@ -142,16 +144,3 @@
 		</main>
 	<%@include file = "../include2/script.jsp" %>
 		<%@include file = "../include2/footer.jsp" %>
-
-
-
-	
-	   
-		
-		
-		
-		
-
-
-   
-   
