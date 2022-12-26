@@ -2,6 +2,7 @@ package kr.co.wonder.mypage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,6 +42,21 @@ public class MypageController {
 	@Autowired
 	MemberService service;
 	
+	
+	//마이페이지 프로필 보기
+	@RequestMapping(value="mypage/mypage", method=RequestMethod.GET)
+	public String mypage(MemberDTO memberDTO, Model model,HttpSession session) throws Exception{
+		logger.info("진입");
+		String id= (String) session.getAttribute("mem_id");
+		MemberDTO user = service.mypage(id);
+		model.addAttribute("user", service.mypage(id));
+		
+		
+		
+		return "mypage/mypage";
+	}
+	
+	
 	//프로필 수정 폼
 	@RequestMapping (value = "mypage/profileUpdateView", method=RequestMethod.GET)
  	public String profileUpdateView() throws Exception {
@@ -51,109 +67,117 @@ public class MypageController {
 	
 	//프로필 수정
 	@RequestMapping(value="mypage/profileUpdate", method=RequestMethod.POST)
-	public String profileUpdate(MemberDTO memberDTO, HttpSession session,HttpServletRequest request) throws Exception{
+	public String profileUpdate(MemberDTO memberDTO, HttpSession session,HttpServletRequest request, RedirectAttributes rttr) throws Exception{
 		logger.info("수정내용"+memberDTO);
 		int r = service.profileUpdate(memberDTO);
 		 session.invalidate();
 		logger.info("변경"+r);
+		rttr.addFlashAttribute("msg", "수정이 완료되었습니다");
 			return "redirect:/";
 	}
 	
-	//회원탈퇴 뷰
-	@RequestMapping(value="mypage/deleteView", method=RequestMethod.GET)
-	public String deleteView()throws Exception{
-		
-		return "mypage/deleteView";
-	}
-	
-	//회원탈퇴
-	@RequestMapping(value="memberDelete", method=RequestMethod.POST)
-	public String memberDelete(MemberDTO memberDTO, RedirectAttributes rttr, HttpSession session)throws Exception{
-			
-		MemberDTO user = (MemberDTO) session.getAttribute("user");
-		
-		String sessionPass = user.getMem_password();
-		
-		String DTOpass= memberDTO.getMem_password();
-		
-		if(!(sessionPass.equals(DTOpass))) {
-			logger.info("안됨");
-			rttr.addAttribute("msg", false);
-			return "redirect:deleteView";
-		}
-		
-		service.memberDelete(memberDTO);
-		session.invalidate();
-		logger.info("회원탈퇴완료");
-		rttr.addAttribute("msg","그동안 이용해주셔서 감사합니다.");
-		return "redirect:/";
-	}
-	
 	//캐쉬충전 뷰
-		@RequestMapping(value="mypage/cashChargeView", method=RequestMethod.GET)
-		public String cashCharge()throws Exception{
-			
-			return "mypage/cashChargeView";
-		}
+	@RequestMapping(value="mypage/cashChargeView", method=RequestMethod.GET)
+	public String cashCharge()throws Exception{
+		
+		return "mypage/cashChargeView";
+	}
 	
 	//캐쉬충전
-		
-		@RequestMapping(value="mypage/charge",method=RequestMethod.POST)
-		public String charge(MemberDTO memberDTO,HttpSession session) throws Exception{
-			MemberDTO user = (MemberDTO) session.getAttribute("user");
-			memberDTO.setMem_id(user.getMem_id());
-			int r = service.charge(memberDTO);
-			logger.info(""+memberDTO);
-			return "mypage/mypage";
-		}
-			
+	
+	@RequestMapping(value="mypage/charge",method=RequestMethod.POST)
+	public String charge(MemberDTO memberDTO,HttpSession session) throws Exception{
+		MemberDTO user = (MemberDTO) session.getAttribute("user");
+		memberDTO.setMem_id(user.getMem_id());
+		int r = service.charge(memberDTO);
+		logger.info(""+memberDTO);
+		return "mypage/mypage";
+	}
+	
 	//캐쉬충전 내역
-		@ResponseBody
-		@RequestMapping(value="mypage/chargelist",method=RequestMethod.POST)
-		public List<MemberDTO> chargelist(MemberDTO memberDTO,HttpSession session) throws Exception{
-			MemberDTO user=(MemberDTO) session.getAttribute("user");
-			memberDTO.setMem_id(user.getMem_id());
-			logger.info("내역"+service.chargelist(memberDTO.getMem_id()));
-			
-			return service.chargelist(memberDTO.getMem_id());
+	@ResponseBody
+	@RequestMapping(value="mypage/chargelist",method=RequestMethod.POST)
+	public List<MemberDTO> chargelist(MemberDTO memberDTO,HttpSession session) throws Exception{
+		MemberDTO user=(MemberDTO) session.getAttribute("user");
+		memberDTO.setMem_id(user.getMem_id());
+		logger.info("내역"+service.chargelist(memberDTO.getMem_id()));
+		
+		return service.chargelist(memberDTO.getMem_id());
+	}
+	
+	//캐쉬출금 뷰
+	@RequestMapping(value="mypage/cashWithdrawView", method=RequestMethod.GET)
+	public String cashWithdraw()throws Exception{
+		
+		return "mypage/cashWithdrawView";
+	}
+	
+	//캐쉬출금
+	
+	@RequestMapping(value="mypage/withdraw",method=RequestMethod.POST)
+	public String withdraw(MemberDTO memberDTO,HttpSession session) throws Exception{
+		MemberDTO user = (MemberDTO) session.getAttribute("user");
+		memberDTO.setMem_id(user.getMem_id());
+		
+		
+		int r = service.withdraw(memberDTO);
+		logger.info(""+memberDTO);
+		
+		if(user.getMem_cash()!= user.getMem_amount1()) {
+			logger.info("출금할 캐쉬가 부족합니다");
+			return "mypage/cashWithdrawView";
 		}
 		
-		//캐쉬출금 뷰
-				@RequestMapping(value="mypage/cashWithdrawView", method=RequestMethod.GET)
-				public String cashWithdraw()throws Exception{
-					
-					return "mypage/cashWithdrawView";
-				}
+		return "mypage/mypage";
+	}
+	
+	//캐쉬출금 내역
+	@ResponseBody
+	@RequestMapping(value="mypage/drawlist",method=RequestMethod.POST)
+	public List<MemberDTO> drawlist(MemberDTO memberDTO,HttpSession session) throws Exception{
+		MemberDTO user=(MemberDTO) session.getAttribute("user");
+		memberDTO.setMem_id(user.getMem_id());
+		logger.info("내역"+service.drawlist(memberDTO.getMem_id()));
 		
-		//캐쉬출금
-		
-				@RequestMapping(value="mypage/withdraw",method=RequestMethod.POST)
-				public String withdraw(MemberDTO memberDTO,HttpSession session) throws Exception{
-					MemberDTO user = (MemberDTO) session.getAttribute("user");
-					memberDTO.setMem_id(user.getMem_id());
-				
-					
-					int r = service.withdraw(memberDTO);
-					logger.info(""+memberDTO);
-//					if(r < 0) {
-//						logger.info("출금할 캐쉬가 부족합니다");
-//						return "mypage/cashWithdrawView";
-//					}
-				
-					return "mypage/mypage";
-				}
-					
-			//캐쉬출금 내역
-				@ResponseBody
-				@RequestMapping(value="mypage/drawlist",method=RequestMethod.POST)
-				public List<MemberDTO> drawlist(MemberDTO memberDTO,HttpSession session) throws Exception{
-					MemberDTO user=(MemberDTO) session.getAttribute("user");
-					memberDTO.setMem_id(user.getMem_id());
-					logger.info("내역"+service.drawlist(memberDTO.getMem_id()));
-					
-					return service.drawlist(memberDTO.getMem_id());
-				}
+		return service.drawlist(memberDTO.getMem_id());
+	}
+	
+	//회원탈퇴 뷰
+		@RequestMapping(value="mypage/deleteView", method=RequestMethod.GET)
+		public String deleteView()throws Exception{
 			
+			return "mypage/deleteView";
+		}
+		
+		//회원탈퇴
+		@RequestMapping(value="memberDelete",method=RequestMethod.POST)
+		public String memberDelete(MemberDTO memberDTO,RedirectAttributes rttr, HttpSession session)throws Exception{
+				
+			MemberDTO user = (MemberDTO) session.getAttribute("user");
+			
+			String sessionPass = user.getMem_password();
+			
+			String DTOpass= memberDTO.getMem_password();
+			
+			if(!(sessionPass.equals(DTOpass))) {
+				logger.info("안됨");
+				rttr.addAttribute("msg", "비밀번호를 확인하여 주세요");
+				return "redirect:deleteView";
+			}
+			
+			service.memberDelete(memberDTO);
+			session.invalidate();
+			logger.info("회원탈퇴완료");
+			rttr.addAttribute("msg",false);
+			return "redirect:/";
+		}
+	
+	
+	
+	
+			
+				
+				
 				@GetMapping(value = "product/wishlistinsert")
 				public String whishlistInsert(wishlistDTO wishlistdto,@RequestParam("product_name") String product_name,@RequestParam("product_cate") String product_cate, HttpSession session, Model model) {
 					//String member_id = session.getAttribute("member_id")
@@ -411,10 +435,4 @@ public class MypageController {
 					 } 
 					 return "redirect:/";  
 					}
-
-				
-
-	
-}
-	
-
+				}
